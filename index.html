@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抽獎登錄</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #FF4B4B; color: white; }
+        form { margin-top: 20px; }
+        input { margin: 5px; padding: 10px; font-size: 16px; }
+        button { padding: 10px 20px; font-size: 18px; background-color: #fff; color: #FF4B4B; border: none; border-radius: 5px; cursor: pointer; }
+        #qrcode { margin: 20px auto; }
+    </style>
+</head>
+<body>
+    <h1>掃碼登錄抽獎</h1>
+    <div id="qrcode"></div>
+    <form id="registrationForm">
+        <input type="text" name="name" placeholder="輸入姓名" required>
+        <input type="text" name="id" placeholder="輸入工號" required>
+        <button type="submit">提交</button>
+    </form>
+    <script>
+        // 生成 QR Code
+        const qrLink = window.location.href;
+        QRCode.toCanvas(document.getElementById('qrcode'), qrLink, { width: 200 });
+
+        // 提交表單數據到後端
+        document.getElementById('registrationForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            const response = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            if (response.ok) {
+                alert('提交成功！');
+                event.target.reset();
+            } else {
+                alert('提交失敗，請稍後再試！');
+            }
+        });
+    </script>
+</body>
+</html>
